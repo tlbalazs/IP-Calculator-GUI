@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import functions
 import data_processing
+from ipaddress import IPv4Cidr
 
 sg.theme("Black")
 
@@ -57,15 +58,18 @@ while True:
                 sg.popup("You must follow the IP address dotted-decimal format, such as 192.168.123.234/24!")
                 break
             else:
-                data_processing.process_input(values['cidr'])
+                # data_processing.process_input(values['cidr'])
+                list_of_elements = functions.process_input(values['cidr'])
+                cidr = IPv4Cidr(first_octet=list_of_elements[0], second_octet=list_of_elements[1], third_octet=list_of_elements[2],
+                                forth_octet=list_of_elements[3], prefix=list_of_elements[4])
+                #
+                # formatted_list = data_processing.formatting_list(data_processing.calculate_values()[0])
+                # print(formatted_list)
+                #
+                # formatted_list2 = data_processing.formatting_list(data_processing.calculate_values()[1])
 
-                formatted_list = data_processing.formatting_list(data_processing.calculate_values()[0])
-                print(formatted_list)
+                rows.extend(functions.formatting_list(cidr.get_all_address))
 
-                formatted_list2 = data_processing.formatting_list(data_processing.calculate_values()[1])
-
-                rows.extend(formatted_list)
-                rows.extend(formatted_list2)
 
                 print(rows)
                 window['table'].update(values=[rows])

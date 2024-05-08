@@ -34,11 +34,11 @@ def check_input(cidr_block):
     return True
 
 
-def process_input(cidr):
-    host_address = cidr.split("/")[0].split(".")
-    prefix = int(cidr.split("/")[1])
-    return host_address, prefix
-
+def process_input(cidr_block):
+    output = cidr_block.split("/")[0].split(".")
+    prefix = cidr_block.split("/")[1]
+    output.append(prefix)
+    return output
 
 
 def check_ip_class(host_address):
@@ -97,83 +97,18 @@ def decimal_to_binary(octets):
     return octets_binary
 
 
-def calculate_netmask(prefix):
-    """
-    Calculates the netmask value based on the given prefix.
-
-    Args:
-        prefix (int): The prefix length.
-
-    Returns:
-        list: The netmask value as a list of four octets.
-    """
-    mask = []
-    for index in range(4):
-        # Determine the value for the current octet based on the prefix
-        if index < prefix // 8:
-            mask.append(255)
-        else:
-            # Calculate the value for the remaining bits in the current octet
-            mask.append(256 - pow(2,8 - (prefix % 8)))
-            # Reset prefix to zero for the remaining octets
-            prefix = 0
-    return mask
-
-
-def calculate_network_address(host, netmask):
-    network_address = [0, 0, 0, 0]
-    for index in range(4):
-        network_address[index] = (int(host[index]) & int(netmask[index]))
-    return network_address
-
-
-def calculate_first_address(host_id):
-    first_address = [0, 0, 0, 0]
-    for index in range(4):
-        first_address[index] = host_id[index]
-        if index == 3:
-            first_address[index] = int(host_id[index]) + 1
-    return first_address
-
-
-def calculate_wildcard_mask(netmask):
-    """
-    Calculates the wildcard mask based on the provided netmask.
-
-    Args:
-        netmask (list): The netmask value as a list of four octets.
-
-    Returns:
-        list: The wildcard mask as a list of four octets.
-    """
-    wildcard = [0, 0, 0, 0]
-    # Calculate the wildcard mask for each octet
-    for index in range(4):
-        # Use bitwise operations to calculate the wildcard mask
-        wildcard[index] = (1 << 8) - 1 - int(netmask[index])
-    return wildcard
-
-
-def calculate_broadcast_address(host, wildcard):
-    broadcast = []
-    for h, w in zip(host, wildcard):
-        broadcast.append(h | w)
-    return broadcast
-
-
-def calculate_last_address(broadcast):
-    last_address = broadcast.copy()
-    last_address[3] = last_address[3] - 1
-    return last_address
-
-
 def calculate_max_hosts(prefix):
     return pow(2, 32 - prefix) - 2
 
 
-def create_decimal_list(host_address, netmask, wildcard, network_address
-                                 ,first_address, last_address, broadcast):
-    decimal_list = [host_address, netmask, wildcard, network_address,
-                    first_address, last_address, broadcast]
-    return decimal_list
+def formatting_list(list_to_format):
+    formatted_list = [f"{'.'.join(map(str, sublist))}"
+                      if isinstance(sublist, list)
+                      else f"{'.'.join(map(str, sublist.split('.')))}"
+                      for sublist in list_to_format]
+    return formatted_list
 
+
+
+if __name__ == '__main__':
+    print(process_input('192.168.10.3/24'))
