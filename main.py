@@ -1,6 +1,5 @@
 import PySimpleGUI as sg
 import functions
-import data_processing
 from ipaddress import IPv4Cidr
 
 sg.theme("Black")
@@ -16,16 +15,11 @@ label_fa = sg.Text("First Address:")
 label_la = sg.Text("Last Address:")
 label_bc = sg.Text("Broadcast:")
 column_layout = sg.Column([[label_ha], [label_netmask], [label_wc], [label_na], [label_fa], [label_la], [label_bc]])
-decimal_ip_addresses = sg.Listbox(values=[''], key='ip_decimal', enable_events=True,
-                                  visible=True)
-column_layout_ip = sg.Column([[decimal_ip_addresses]])
-binary_ip_addresses = sg.Listbox(values=[''], key='ip_binary', enable_events=True,
-                                 visible=False)
-toprow = ['Host Address', 'Netmask', 'Wildcard', 'Network Address', 'First Address', 'Last Address', 'Broadcast']
+header = ['Host Address', 'Netmask', 'Wildcard', 'Network Address', 'First Address', 'Last Address', 'Broadcast']
 rows = []
 
 
-table = sg.Table(values=rows, headings=toprow,
+table = sg.Table(values=rows, headings=header,
                  auto_size_columns=True,
                  display_row_numbers=False,
                  justification='center', key='table',
@@ -33,12 +27,16 @@ table = sg.Table(values=rows, headings=toprow,
                  enable_events=True,
                  expand_x=True,
                  expand_y=True,
-                 enable_click_events=False
+                 enable_click_events=False,
+                 num_rows=3,
+                 row_height=40,
+                 hide_vertical_scroll=True,
+                 border_width=5,
+                 def_col_width=36
                  )
 
 
 exit_button = sg.Button("Exit")
-
 
 
 window = sg.Window("IP Calculator App",
@@ -47,7 +45,7 @@ window = sg.Window("IP Calculator App",
                            [table],
                            [exit_button]
                            ],
-                   font=('Helvetica', 15)
+                   font=('Helvetica', 12), size=(2500, 300)
                    )
 
 while True:
@@ -58,25 +56,18 @@ while True:
                 sg.popup("You must follow the IP address dotted-decimal format, such as 192.168.123.234/24!")
                 break
             else:
-                # data_processing.process_input(values['cidr'])
                 list_of_elements = functions.process_input(values['cidr'])
-                cidr = IPv4Cidr(first_octet=list_of_elements[0], second_octet=list_of_elements[1], third_octet=list_of_elements[2],
-                                forth_octet=list_of_elements[3], prefix=list_of_elements[4])
-                #
-                # formatted_list = data_processing.formatting_list(data_processing.calculate_values()[0])
-                # print(formatted_list)
-                #
-                # formatted_list2 = data_processing.formatting_list(data_processing.calculate_values()[1])
+                cidr = IPv4Cidr(first_octet=list_of_elements[0], second_octet=list_of_elements[1],
+                                third_octet=list_of_elements[2], forth_octet=list_of_elements[3],
+                                prefix=list_of_elements[4])
 
-                rows.extend(functions.formatting_list(cidr.get_all_address))
+                binary_row = [functions.decimal_to_binary(x) for x in [cidr.get_all_address[i] for i in range(7)]]
 
-
-                print(rows)
-                window['table'].update(values=[rows])
-
+                rows.append(functions.formatting_list(cidr.get_all_address))
+                rows.append(functions.formatting_list(binary_row))
+                window['table'].update(values=rows)
         case "Exit":
             break
         case sg.WIN_CLOSED:
             break
-
 window.close()

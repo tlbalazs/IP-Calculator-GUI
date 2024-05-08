@@ -25,7 +25,7 @@ class IPv4Cidr:
                 self.calculate_broadcast_address()]
 
     def get_host_address_list(self):
-        return [self.first_octet, self.second_octet, self.third_octet, self.forth_octet]
+        return [int(self.first_octet), int(self.second_octet), int(self.third_octet), int(self.forth_octet)]
 
     def calculate_netmask(self):
         """

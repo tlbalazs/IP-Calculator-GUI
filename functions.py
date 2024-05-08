@@ -107,8 +107,3 @@ def formatting_list(list_to_format):
                       else f"{'.'.join(map(str, sublist.split('.')))}"
                       for sublist in list_to_format]
     return formatted_list
-
-
-
-if __name__ == '__main__':
-    print(process_input('192.168.10.3/24'))
