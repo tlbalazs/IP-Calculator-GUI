@@ -63,8 +63,8 @@ while True:
 
                 binary_row = [functions.decimal_to_binary(x) for x in [cidr.get_all_address[i] for i in range(7)]]
 
-                rows.append(functions.formatting_list(cidr.get_all_address))
-                rows.append(functions.formatting_list(binary_row))
+                rows.append(functions.format_list(cidr.get_all_address))
+                rows.append(functions.format_list(binary_row))
                 window['table'].update(values=rows)
         case "Exit":
             break

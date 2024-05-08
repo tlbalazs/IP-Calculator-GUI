@@ -101,7 +101,7 @@ def calculate_max_hosts(prefix):
     return pow(2, 32 - prefix) - 2
 
 
-def formatting_list(list_to_format):
+def format_list(list_to_format):
     formatted_list = [f"{'.'.join(map(str, sublist))}"
                       if isinstance(sublist, list)
                       else f"{'.'.join(map(str, sublist.split('.')))}"
